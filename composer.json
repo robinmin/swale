@@ -1,6 +1,6 @@
 {
-    "name": "geexfinance/GeexService",
-    "description": "Service gate for Geex Finance.",
+    "name": "robinmin/swale",
+    "description": "my tiny MVC framework",
     "version": "0.0.1-dev",
     "type": "project",
     "authors": [{
