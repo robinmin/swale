@@ -21,14 +21,14 @@ Create a new file composer.json in your project folder with the following conten
         }
     }],
     "require": {
-        "php": ">=5.4.0",
-        "aura/sql": "dev-master",
-        "aura/session": "dev-master",
-        "guzzlehttp/guzzle": "4.1.*",
-        "smarty/smarty": "3.1.*@dev",
-        "ssdb/phpssdb": "dev-master",
-        "maliemin/ssdb-session": "dev-master",
-        "robinmin/swale": "dev-master"
+        "php"                  : ">=5.4.0",
+        "aura/sql"             : "dev-master",
+        "aura/session"         : "dev-master",
+        "guzzlehttp/guzzle"    : "4.1.*",
+        "smarty/smarty"        : "3.1.*@dev",
+        "ssdb/phpssdb"         : "dev-master",
+        "maliemin/ssdb-session": "dev-master"
+        "robinmin/swale"       : "dev-master"
     }
 }
 ```
