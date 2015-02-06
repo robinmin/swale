@@ -186,3 +186,33 @@ function error_handler($errno, $errstr, $errfile, $errline){
     return true;
 }
 
+/**
+ * load_class : load class by class name
+ * @param  string  $class_name class name
+ * @param  string  $folder     folder name
+ * @param  boolean $only_once  flag to indicate that only new class will be required
+ * @return boolean             operation result
+ */
+function load_class($class_name, $folder='', $only_once=true){
+    $fname = '';
+    if( file_exists(APP_PATH.'/'.$folder.'/'.$class_name.'.php') ){
+        $fname = APP_PATH.'/'.$folder.'/'.$class_name.'.php';
+    }elseif( file_exists(SYS_PATH.'/'.$folder.'/'.$class_name.'.php') ){
+        $fname = SYS_PATH.'/'.$folder.'/'.$class_name.'.php';
+    }
+    if( empty($fname) )   return false;
+    if( $only_once ){
+        require_once $fname;
+    }else{
+        require_once $fname;
+    }
+    return true;
+}
+
+function load_core($class_name, $only_once=true){
+    return load_class($class_name, 'core', $only_once);
+}
+
+function load_library($class_name, $only_once=true){
+    return load_class($class_name, 'libs', $only_once);
+}
