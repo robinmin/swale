@@ -23,8 +23,11 @@ define('SYS_ENV', 'development');
 /**
  * SYS_PATH : Path name of the system
  */
-define('SYS_PATH', __DIR__.'/sys');
-
+if( file_exists(__DIR__.'/sys') ){
+    define('SYS_PATH', __DIR__.'/sys');
+}else{
+    define('SYS_PATH', __DIR__.'/vendor/robinmin/swale/sys');
+}
 /**
  * APP_PATH : Path name of the current application
  */
