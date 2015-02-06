@@ -27,7 +27,7 @@ Create a new file composer.json in your project folder with the following conten
         "guzzlehttp/guzzle"    : "4.1.*",
         "smarty/smarty"        : "3.1.*@dev",
         "ssdb/phpssdb"         : "dev-master",
-        "maliemin/ssdb-session": "dev-master"
+        "maliemin/ssdb-session": "dev-master",
         "robinmin/swale"       : "dev-master"
     }
 }
@@ -37,5 +37,8 @@ Then run the following command:
 
 ```BASH
 composer install --dev
+cp -p vendor/robinmin/swale/server.php server.php
+cp -rp vendor/robinmin/swale/apps ./apps
+mkdir test
 ```
 
