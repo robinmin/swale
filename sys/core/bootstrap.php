@@ -14,7 +14,7 @@ define('SYS_START_AT', date('Y-m-d H:i:s'));
 /*
  * Enable autoload for the classes installed by composer
  */
-require dirname(dirname(__DIR__)).'/vendor/autoload.php';
+require dirname(APP_PATH).'/vendor/autoload.php';
 
 /*
  * Enable core components
