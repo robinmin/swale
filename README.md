@@ -1,5 +1,5 @@
 ## swale
-This is a tiny MVC framework based on swoole extension.
+This is a tiny MVC framework based on [swoole](http://www.swoole.com/) extension.
 
 
 #### Installation ####
@@ -33,12 +33,18 @@ Create a new file composer.json in your project folder with the following conten
 }
 ```
 
-Then run the following command:
+Then run the following command to prepare project folder structure:
 
 ```BASH
 composer install --dev
 cp -p vendor/robinmin/swale/server.php server.php
 cp -rp vendor/robinmin/swale/apps ./apps
 mkdir test
+```
+
+Now, you can start the default web server by:
+
+```BASH
+php ./server.php
 ```
 
