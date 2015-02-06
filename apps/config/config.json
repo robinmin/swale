@@ -10,15 +10,15 @@
         "debug_mode"                : 1,
         "open_tcp_keepalive"        : 1,
         "task_ipc_mode"             : 2,
-        "log_file"                  : "/tmp/swoole.log",
+        "log_file"                  : "/var/log/swale.log",
         "heartbeat_idle_time"       : 5,
         "heartbeat_check_interval"  : 5
     },
     "database" : {
             "adapter"   : "mysql",
-            "dsn"       : "host=localhost;dbname=gravity",
-            "username"  : "root",
-            "password"  : "dragon2001"
+            "dsn"       : "host=localhost;dbname=test",
+            "username"  : "user",
+            "password"  : "password"
     },
     "cache" : {
         "ip"   : "127.0.0.1",

@@ -216,3 +216,16 @@ function load_core($class_name, $only_once=true){
 function load_library($class_name, $only_once=true){
     return load_class($class_name, 'libs', $only_once);
 }
+
+function load_model($class_name, $only_once=true){
+    return load_class($class_name, 'models', $only_once);
+}
+
+function load_config($class_name, $only_once=true){
+    if( load_class(SYS_ENV.'/'.$class_name, 'config', $only_once) ){
+        return true;
+    }elseif( load_class($class_name, 'config', $only_once) ){
+        return true;
+    }
+    return false;
+}
