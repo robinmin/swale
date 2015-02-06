@@ -70,12 +70,12 @@ class AppServer {
         set_error_handler( 'error_handler' );
         set_exception_handler( 'exception_handler' );
 
-        // if( !$this->load_class('container', 'core', false) ){
+        // if( !AppServer::load_class('container', 'core', false) ){
         //     log_message('error', 'Failed to load class : container');
         // }
 
         // Load config
-        if( !$this->load_config($config) ){
+        if( !$this->init_config($config) ){
             // Failed to load config
         }
 
@@ -87,7 +87,7 @@ class AppServer {
 
         // load classes
         foreach ($arrCls as $idx => $cls_name) {
-            if( !$this->load_class($cls_name, 'core', false) ){
+            if( !AppServer::load_class($cls_name, 'core', false) ){
                 $blResult = false;
                 log_message('error', 'Failed to load class : '.$cls_name);
             }
@@ -101,19 +101,45 @@ class AppServer {
      * @param  string $check_class  check class or not
      * @return bool           TRUE for class loaded, otherwise return false
      */
-    public function load_class($cls_name, $folder='', $check_class=false){
+    public static function load_class($cls_name, $folder='', $check_class=false){
         if( empty($folder) ){
             $folder = 'core';
         }
         if( $check_class && class_exists(basename($cls_name), false) ){
             return true;
         }
+        $fname = '';
         if( file_exists(APP_PATH.'/'.$folder.'/'.$cls_name.'.php') ){
-            require APP_PATH.'/'.$folder.'/'.$cls_name.'.php';
+            $fname = APP_PATH.'/'.$folder.'/'.$cls_name.'.php';
         }elseif( file_exists(SYS_PATH.'/'.$folder.'/'.$cls_name.'.php') ){
-            require SYS_PATH.'/'.$folder.'/'.$cls_name.'.php';
+            $fname = SYS_PATH.'/'.$folder.'/'.$cls_name.'.php';
+        }
+        if( empty($fname) )   return false;
+        if( $check_class ){
+            require_once $fname;
+        }else{
+            require $fname;
         }
         return $check_class ? class_exists(basename($cls_name), false) : true;
+    }
+
+    /**
+     * load_config : Load config information by name
+     * @param  string $cfg_name     config name
+     * @return mixed           config information
+     */
+    public static function load_config($cfg_name){
+        if( file_exists(APP_PATH.'/config/'.SYS_ENV.'/'.$cfg_name.'.php') ){
+            return require(APP_PATH.'/config/'.SYS_ENV.'/'.$cfg_name.'.php');
+        }elseif( file_exists(APP_PATH.'/config/'.$cfg_name.'.php') ){
+            return require(APP_PATH.'/config/'.$cfg_name.'.php');
+        }elseif( file_exists(SYS_PATH.'/config/'.SYS_ENV.'/'.$cfg_name.'.php') ){
+            return require(SYS_PATH.'/config/'.SYS_ENV.'/'.$cfg_name.'.php');
+        }elseif( file_exists(SYS_PATH.'/config/'.$cfg_name.'.php') ){
+            return require(SYS_PATH.'/config/'.$cfg_name.'.php');
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -141,11 +167,11 @@ class AppServer {
     }
 
     /**
-     * load_config : Load config
+     * init_config : Load config
      * @param  array  $config config object
      * @return object   Config object
      */
-    public function load_config( $config=array() ) {
+    public function init_config( $config=array() ) {
         if( !empty($this->config) ){
             return true;
         }
@@ -439,13 +465,14 @@ class AppServer {
             if( empty($task_data['class']) ){
                 $task_data['class'] = 'base_task';
             }
-            if( !class_exists($task_data['class'], false) ){
-                $cls_file = $this->config->get('task_home' ,APP_PATH.'/models/task').'/'.$task_data['class'].'.php';
-                if( !file_exists($cls_file) ){
-                    throw new Exception('Invalid class has been provided : '.$task_data['class']);
-                }
-                require_once $cls_file;
-            }
+            // if( !class_exists($task_data['class'], false) ){
+            //     $cls_file = $this->config->get('task_home' ,APP_PATH.'/models/task').'/'.$task_data['class'].'.php';
+            //     if( !file_exists($cls_file) ){
+            //         throw new Exception('Invalid class has been provided : '.$task_data['class']);
+            //     }
+            //     require_once $cls_file;
+            // }
+            AppServer::load_class($task_data['class'], 'models/task', true);
 
             // create instance
             $obj = new $task_data['class']();
@@ -622,7 +649,7 @@ class AppServer {
                 $action_name = $app->router->fetch_action();
 
                 // load class
-                if( !$this->load_class($cls_name, 'controllers', true) ){
+                if( !AppServer::load_class($cls_name, 'controllers', true) ){
                     throw new Exception('Failed to load : '.$cls_name, 404);
                 }
 
@@ -724,9 +751,10 @@ class AppServer {
         while( count($cfg)>0){
             $name = array_shift($cfg);
             $cls_name = 'plugin_'.$name;
-            if (!class_exists($cls_name, false)) {
-                require_once (APP_PATH.'/libs/'.$cls_name.'.php');
-            }
+            // if (!class_exists($cls_name, false)) {
+            //     require_once (APP_PATH.'/libs/'.$cls_name.'.php');
+            // }
+            AppServer::load_class($cls_name, 'libs', true);
             $plugins[$name] = new $cls_name();
             if( !$plugins[$name]->init() ){
                 log_message('error', 'Failed to init plugin : '.$name);

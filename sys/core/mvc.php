@@ -207,12 +207,15 @@ class super_app extends array_container{
         }
 
         $new_model = basename($model);
-        if( !class_exists($new_model, false) ){
-            $cls_file = APP_PATH.'/models/'.$model.'.php';
-            if( !file_exists($cls_file) ){
-                return false;
-            }
-            require_once $cls_file;
+        // if( !class_exists($new_model, false) ){
+        //     $cls_file = APP_PATH.'/models/'.$model.'.php';
+        //     if( !file_exists($cls_file) ){
+        //         return false;
+        //     }
+        //     require_once $cls_file;
+        // }
+        if( !AppServer::load_class($model, 'models', true) ){
+            throw new Exception('Failed to load : '.$model, 404);
         }
 
         // create instance
