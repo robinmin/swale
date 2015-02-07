@@ -24,6 +24,15 @@ require SYS_PATH.'/core/container.php';
 
 
 class AppServer {
+    // Default modules loaded when start
+    private $_default_module = array('plugin', 'mvc');
+
+    // Default plugin for each worker started
+    private $_default_sys_plugin = array('database');
+
+    // Default plugin for each http request
+    private $_default_http_plugin = array('buffer', 'router', 'session');
+
     // Global server instance
     private $_server;
 
@@ -70,27 +79,9 @@ class AppServer {
         set_error_handler( 'error_handler' );
         set_exception_handler( 'exception_handler' );
 
-        // if( !AppServer::load_class('container', 'core', false) ){
-        //     log_message('error', 'Failed to load class : container');
-        // }
-
         // Load config
         if( !$this->init_config($config) ){
-            // Failed to load config
-        }
-
-        $this->_sys_plugins = array();
-
-        // default components
-        $arrCls = array('plugin', 'mvc');
-        $blResult = true;
-
-        // load classes
-        foreach ($arrCls as $idx => $cls_name) {
-            if( !AppServer::load_class($cls_name, 'core', false) ){
-                $blResult = false;
-                log_message('error', 'Failed to load class : '.$cls_name);
-            }
+            log_message('error', 'Failed to load config');
         }
     }
 
@@ -200,6 +191,22 @@ class AppServer {
      * @return bool     Operation result
      */
     public function start() {
+        // if( !AppServer::load_class('container', 'core', false) ){
+        //     log_message('error', 'Failed to load class : container');
+        // }
+
+        $this->_sys_plugins = array();
+
+        // default components
+        $arrCls = $this->_default_module;
+
+        // load classes
+        foreach ($arrCls as $idx => $cls_name) {
+            if( !AppServer::load_class($cls_name, 'core', false) ){
+                throw new Exception('Failed to load class : '.$cls_name, 404);
+            }
+        }
+
         $serverPort = $this->config->get('server_port', 2048);
         $serverType = $this->config->get('server_type', 'http');
 
@@ -703,7 +710,15 @@ class AppServer {
      */
     private function load_http_plugins($request, $response){
         $plugins = array();
-        $cfg = $this->config->get('http_plugin', array());
+        $cfg = $this->_default_http_plugin;
+        $cfgTemp = $this->config->get('http_plugin', array());
+        foreach ($cfgTemp as $plg) {
+            if( !in_array($plg, $cfg) ){
+                $cfg[] = $plg;
+            }
+        }
+        unset($cfgTemp);
+
         while( count($cfg)>0){
             $name = array_shift($cfg);
             $cls_name = 'plugin_'.$name;
@@ -746,7 +761,15 @@ class AppServer {
             return true;
         }
         $plugins = array();
-        $cfg = $this->config->get('sys_plugin', array());
+        $cfg = $this->_default_sys_plugin;
+        $cfgTemp = $this->config->get('sys_plugin', array());
+        foreach ($cfgTemp as $plg) {
+            if( !in_array($plg, $cfg) ){
+                $cfg[] = $plg;
+            }
+        }
+        unset($cfgTemp);
+
         $blResult = true;
         while( count($cfg)>0){
             $name = array_shift($cfg);
@@ -864,5 +887,44 @@ class AppServer {
         }else{
             return $this->_server->taskwait($data);
         }
+    }
+
+    public function request($cmdline=''){
+        // find commond line
+        if( is_array($cmdline) ){
+            if( count($cmdline)>1 ){
+                $cmdline = $cmdline[1];
+            }else{
+                $cmdline = '';
+            }
+        }
+
+        $http_code = 200;
+        $time_cost = 0;
+        $content = '';
+        try {
+            $serverPort = $this->config->get('server_port', 2048);
+            $time_start = microtime(true);
+
+            // create client instance
+            $client = new \GuzzleHttp\Client(['base_url' => 'http://127.0.0.1:'.$serverPort.'/']);
+
+            $response = $client->get($cmdline);
+            $content = (string)$response->getBody();
+
+            $time_cost = 1000 * (microtime(true) - $time_start);
+        } catch (ClientException $e) {
+            log_message('error', $e->getRequest());
+            log_message('error', $e->getResponse());
+        } catch(Exception $e) {
+            if( $e->getCode()>0 ){
+                $http_code = $e->getCode();
+            }else{
+                $http_code = 500;
+            }
+            log_message('error', $e->getMessage());
+        }
+        // output
+        echo $content;
     }
 }
