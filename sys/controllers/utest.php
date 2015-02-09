@@ -10,9 +10,6 @@ class utest extends base_ctrl{
     // current method name
     protected $_method_name;
 
-    // unit test result
-    protected $_results;
-
     // protected $message;
     // protected $messages;
     protected $asserts;
@@ -23,20 +20,18 @@ class utest extends base_ctrl{
         $this->modelname_short = basename($name, '.php');
         $this->messages = array();
         $this->_method_name = '';
-        $this->_results     = array();
     //     $this->load->library('unit_test');
     }
 
     public function index($method = ''){
         if( empty($method) ){
-            $this->_run($method);
-        }else{
             $this->_run_all();
+        }else{
+            $this->_run($method);
         }
 
         // show result
-        var_dump($this->_results);
-        // return $this->_show_all();
+        render(SYS_PATH.'/views/'.__CLASS__.'/'.__FUNCTION__.'.tpl', $this->_data, false);
     }
 
     // function show_results()
@@ -77,11 +72,14 @@ class utest extends base_ctrl{
     }
 
     private function _run($method){
+        if( empty($method) ){
+            return FALSE;
+        }
         // Reset message from test
         $this->message = '';
         $this->_method_name = $method;
-        if( !isset($this->_results[$this->_method_name]) ){
-            $this->_results[$this->_method_name] = array();
+        if( !isset($this->_data[$this->_method_name]) ){
+            $this->_data[$this->_method_name] = array();
         }
 
         // Reset asserts
@@ -115,7 +113,8 @@ class utest extends base_ctrl{
     }
 
     private function _get_test_methods(){
-        $methods = get_class_methods($this);
+        $app = super_app::get_app();
+        $methods = get_class_methods($app->router->fetch_class());
         $testMethods = array();
         foreach ($methods as $method) {
             if (substr(strtolower($method), 0, 5) == 'test_') {
@@ -162,7 +161,7 @@ class utest extends base_ctrl{
     public function _post() { }
 
     private function _log_result($func, $result=true, $message=''){
-        $this->_results[$this->_method_name][] = [
+        $this->_data[$this->_method_name][] = [
             'function'  => $func,
             'result'    => $result,
             'message'   => $message
