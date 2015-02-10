@@ -148,6 +148,8 @@ class plugin_router extends plugin_base{
             throw new Exception('Invalid action has been provided => '.$this->_class.'::'.$this->_action, 404);
         }
 
+        // setup http header
+        $this->_response->header('Content-Type', empty($ctrl->content_type) ? 'text/html' : $ctrl->content_type);
         return $http_code;
     }
 
