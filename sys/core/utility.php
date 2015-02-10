@@ -35,9 +35,13 @@ function microtime_float(){
  * @param  string  $template template name
  * @param  array  $data      template data
  * @param  boolean $return   display or return the rendered result
+ * @param  boolean $content_type    response content type
  * @return mixed         true/false or rendered result
  */
-function render($template, $data, $return = FALSE){
+function render($template, $data, $return = FALSE, $content_type=''){
+    // // setup http response header
+    // header('Content-Type: '.(empty($content_type) ? 'text/html' : $content_type).'; charset=UTF-8');
+
     if( empty($template) ){
         return FALSE;
     }
@@ -184,4 +188,20 @@ function error_handler($errno, $errstr, $errfile, $errline){
     }
 
     return true;
+}
+
+/**
+ * base_url : base url
+ * @return string base url
+ */
+function base_url(){
+    $base_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
+    $base_url .= '://'. $_SERVER['HTTP_HOST'];
+    if( isset($_SERVER['SERVER_PORT']) ){
+        if( !(substr($base_url,0,5)==='https' && $_SERVER['SERVER_PORT']==443) && !(substr($base_url,0,5)==='http:' && $_SERVER['SERVER_PORT']==80) ){
+            $base_url .= ':'. $_SERVER['SERVER_PORT'].'/';
+        }
+    }
+    $base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    return $base_url;
 }
