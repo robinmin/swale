@@ -8,7 +8,9 @@ class swale_tests extends utest{
     }
 
     public function test_func1(){
+        $this->_assert_true(1==0);
         $this->_assert_true(1==1);
-        echo __METHOD__;
+        $this->_assert_true(1==1);
+        // echo __METHOD__;
     }
 }
