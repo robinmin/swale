@@ -191,7 +191,7 @@ class AppServer {
      * @return bool     Operation result
      */
     public function start() {
-        // if( !AppServer::load_class('container', 'core', false) ){
+        // if( !self::load_class('container', 'core', false) ){
         //     log_message('error', 'Failed to load class : container');
         // }
 
@@ -202,7 +202,7 @@ class AppServer {
 
         // load classes
         foreach ($arrCls as $idx => $cls_name) {
-            if( !AppServer::load_class($cls_name, 'core', false) ){
+            if( !self::load_class($cls_name, 'core', false) ){
                 throw new Exception('Failed to load class : '.$cls_name, 404);
             }
         }
@@ -479,7 +479,7 @@ class AppServer {
             //     }
             //     require_once $cls_file;
             // }
-            AppServer::load_class($task_data['class'], 'models/task', true);
+            self::load_class($task_data['class'], 'models/task', true);
 
             // create instance
             $obj = new $task_data['class']();
@@ -590,6 +590,7 @@ class AppServer {
                 $_REQUEST = array();
                 break;
         }
+        if( !isset($_SERVER['HTTP_HOST']) )    $_SERVER['HTTP_HOST'] = 'localhost'; // to avoid invalid HTTP_HOST
         // TODO : prepare $_SESSION
         // $_SESSION = array();
 
@@ -656,7 +657,7 @@ class AppServer {
                 $action_name = $app->router->fetch_action();
 
                 // load class
-                if( !AppServer::load_class($cls_name, 'controllers', true) ){
+                if( !self::load_class($cls_name, 'controllers', true) ){
                     throw new Exception('Failed to load : '.$cls_name, 404);
                 }
 
@@ -777,7 +778,7 @@ class AppServer {
             // if (!class_exists($cls_name, false)) {
             //     require_once (APP_PATH.'/libs/'.$cls_name.'.php');
             // }
-            AppServer::load_class($cls_name, 'libs', true);
+            self::load_class($cls_name, 'libs', true);
             $plugins[$name] = new $cls_name();
             if( !$plugins[$name]->init() ){
                 log_message('error', 'Failed to init plugin : '.$name);
