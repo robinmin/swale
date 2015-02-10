@@ -1,76 +1,85 @@
 <?php
 
 class utest extends base_ctrl{
-    // // The folder INSIDE /controllers/ where the test classes are located
-    // protected $test_dir = '/test/';
-
     protected $modelname;
     protected $modelname_short;
 
     // current method name
     protected $_method_name;
 
-    // protected $message;
-    // protected $messages;
+    // test results
+    protected $_results;
+
+    protected $message;
+    protected $messages;
     protected $asserts;
 
+    /**
+     * __construct : ctor
+     * @param string $name model name
+     */
     public function __construct($name=''){
         parent::__construct();
         $this->modelname = $name;
         $this->modelname_short = basename($name, '.php');
         $this->messages = array();
         $this->_method_name = '';
-    //     $this->load->library('unit_test');
     }
 
-    public function index($method = ''){
+    /**
+     * index : interface to run the unit test
+     * @param  string $cli         flag of cli, possible value must be '1' or '0'
+     * @param  string $method   function name
+     * @return none
+     */
+    public function index($cli='0', $method = ''){
         if( empty($method) ){
             $this->_run_all();
         }else{
             $this->_run($method);
         }
-
-        // show result
-        render(SYS_PATH.'/views/'.__CLASS__.'/'.__FUNCTION__.'.tpl', $this->_data, false);
+        $this->_show_results($cli);
     }
 
-    // function show_results()
-    // {
-    //     $this->_run_all();
-    //     $data['modelname'] = $this->modelname;
-    //     $data['results'] = $this->unit->result();
-    //     $data['messages'] = $this->messages;
-    //     $this->load->view('test/results', $data);
-    // }
+    /**
+     * _show_results : show unit test result
+     * @param  string $cli         flag of cli, possible value must be '1' or '0'
+     * @return none
+     */
+    protected function _show_results($cli='0'){
+        $app = super_app::get_app();
+        // prepare data for rendering
+        $this->_data = array(
+            'module'    => $this->modelname_short,
+            'utest'     => $this->_results,
+            'base_url'  => base_url().$app->router->fetch_class().'/'.$app->router->fetch_action().'/'.$cli.'/'
+        );
+        // show result
+        if( '1'==$cli ){
+            $this->_data['cli_start_ok'] = "\x1b[1;32;40m";
+            $this->_data['cli_start_ng'] = "\x1b[1;31;40m";
+            $this->_data['cli_end'] = "\x1b[0m";
+            render(SYS_PATH.'/views/'.__CLASS__.'/index_cli.tpl', $this->_data, false, 'text/plain');
+        }else{
+            render(SYS_PATH.'/views/'.__CLASS__.'/index.tpl', $this->_data, false);
+        }
+    }
 
-    // private function _show_all(){
-    //     $this->_run_all();
-    //     $data['modelname'] = $this->modelname;
-    // //     $data['results'] = $this->unit->result();
-    //     $data['messages'] = $this->messages;
-
-    //     $this->load->view('test/header');
-    //     $this->load->view('test/results', $data);
-    //     $this->load->view('test/footer');
-    // }
-
-    // private function _show($method){
-    //     $this->_run($method);
-    //     $data['modelname'] = $this->modelname;
-    //     // $data['results'] = $this->unit->result();
-    //     $data['messages'] = $this->messages;
-
-    //     // $this->load->view('test/header');
-    //     // $this->load->view('test/results', $data);
-    //     // $this->load->view('test/footer');
-    // }
-
+    /**
+     * _run_all : run all unit test
+     * @return none
+     */
     private function _run_all(){
         foreach ($this->_get_test_methods() as $method){
             $this->_run($method);
         }
     }
 
+    /**
+     * _run : run unit test for curent method
+     * @param  string $method function name
+     * @return boolean         operational result
+     */
     private function _run($method){
         if( empty($method) ){
             return FALSE;
@@ -78,11 +87,18 @@ class utest extends base_ctrl{
         // Reset message from test
         $this->message = '';
         $this->_method_name = $method;
-        if( !isset($this->_data[$this->_method_name]) ){
-            $this->_data[$this->_method_name] = array();
+        if( !isset($this->_results[$this->_method_name]) ){
+            $this->_results[$this->_method_name] = array(
+                'results' => array(),
+                'assert_good'  => 0,
+                'assert_bad'   => 0,
+                'assert_total' => 0,
+                'time_cost'    => ''
+            );
         }
 
         // Reset asserts
+        $time_start = microtime_float();
         $this->asserts = TRUE;
         try{
             // Run cleanup method _pre
@@ -99,19 +115,30 @@ class utest extends base_ctrl{
             $this->asserts = FALSE;
         }
         $this->messages[] = $this->message;
+        $time_end = microtime_float();
+
+        // summary test results
+        $good = 0;
+        $bad = 0;
+        foreach ($this->_results[$this->_method_name]['results'] as &$assertion) {
+            if( isset($assertion['result']) && $assertion['result'] == TRUE){
+                $good++;
+            }else{
+                $bad++;
+            }
+        }
+        $this->_results[$this->_method_name]['assert_good'] = $good;
+        $this->_results[$this->_method_name]['assert_bad']  = $bad;
+        $this->_results[$this->_method_name]['assert_total']= $good+$bad;
+        $this->_results[$this->_method_name]['time_cost']   = number_format(100*($time_end - $time_start), 3).' ms';
 
         return $this->asserts;
-
-    //     // Set test description to "model name -> method name" with links
-    //     $this->load->helper('url');
-    //     $test_class_segments = $this->test_dir . strtolower($this->modelname_short);
-    //     $test_method_segments = $test_class_segments . '/' . substr($method, 5);
-    //     $desc = anchor($test_class_segments, $this->modelname_short) . ' -> ' . anchor($test_method_segments, substr($method, 5));
-
-    //     // Pass the test case to CodeIgniter
-    //     $this->unit->run($this->asserts, TRUE, $desc);
     }
 
+    /**
+     * _get_test_methods : list all public method for current requested ctontroller
+     * @return array function name list
+     */
     private function _get_test_methods(){
         $app = super_app::get_app();
         $methods = get_class_methods($app->router->fetch_class());
@@ -123,30 +150,6 @@ class utest extends base_ctrl{
         }
         return $testMethods;
     }
-
-    // /**
-    //  * Remap function (CI magic function)
-    //  *
-    //  * Reroutes any request that matches a test function in the subclass
-    //  * to the _show() function.
-    //  *
-    //  * This makes it possible to request /my_test_class/my_test_function
-    //  * to test just that single function, and /my_test_class to test all the
-    //  * functions in the class.
-    //  *
-    //  */
-    // function _remap($method)
-    // {
-    //     $test_name = 'test_' . $method;
-    //     if (method_exists($this, $test_name))
-    //     {
-    //         $this->_show($test_name);
-    //     }
-    //     else
-    //     {
-    //         $this->$method();
-    //     }
-    // }
 
     /**
      * Cleanup function that is run before each test case
@@ -161,7 +164,7 @@ class utest extends base_ctrl{
     public function _post() { }
 
     private function _log_result($func, $result=true, $message=''){
-        $this->_data[$this->_method_name][] = [
+        $this->_results[$this->_method_name]['results'][] = [
             'function'  => $func,
             'result'    => $result,
             'message'   => $message
