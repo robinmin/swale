@@ -5,6 +5,12 @@
  */
 class base_ctrl{
     /**
+     * $_content_type : Comtent tyep
+     * @var string
+     */
+    public $content_type = '';
+
+    /**
      * $_data : page data
      * @var array
      */
