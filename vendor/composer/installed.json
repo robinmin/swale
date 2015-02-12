@@ -398,18 +398,18 @@
         "source": {
             "type": "git",
             "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "b2b114d5b8ece1f4b53dade0b117983d85d1bca4"
+            "reference": "0e87a99507c9acd6ebc10110014060c8f283474d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/b2b114d5b8ece1f4b53dade0b117983d85d1bca4",
-            "reference": "b2b114d5b8ece1f4b53dade0b117983d85d1bca4",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/0e87a99507c9acd6ebc10110014060c8f283474d",
+            "reference": "0e87a99507c9acd6ebc10110014060c8f283474d",
             "shasum": ""
         },
         "require": {
             "php": ">=5.2"
         },
-        "time": "2015-02-08 20:21:30",
+        "time": "2015-02-11 06:15:40",
         "type": "library",
         "extra": {
             "branch-alias": {
