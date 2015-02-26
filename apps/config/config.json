@@ -18,13 +18,14 @@
             "adapter"   : "mysql",
             "dsn"       : "host=localhost;dbname=test",
             "username"  : "user",
-            "password"  : "password"
+            "password"  : "password",
+            "debug_mode": true
     },
     "cache" : {
         "ip"   : "127.0.0.1",
         "port" : "8888"
     },
-    "http_plugin"       : ["buffer","router", "session"],
-    "sys_plugin"        : ["database"],
+    "http_plugin"       : [],
+    "sys_plugin"        : [],
     "http_url_prefix"   : ""
 }
