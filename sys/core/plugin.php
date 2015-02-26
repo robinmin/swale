@@ -215,6 +215,12 @@ class plugin_database extends plugin_base{
     private $_db = null;
 
     /**
+     * $_debug_mode : debug mode
+     * @var boolean
+     */
+    protected $_debug_mode = false;
+
+    /**
      * init : connect to database
      * @return boolean     Operation result
      */
@@ -229,6 +235,8 @@ class plugin_database extends plugin_base{
 
         $result = true;
         try {
+            $this->_debug_mode = isset($db_cfg['debug_mode']) ? $db_cfg['debug_mode'] : false;
+
             $connection_factory = new ConnectionFactory;
             $db = $connection_factory->newInstance(
                 isset($db_cfg['adapter']) ? $db_cfg['adapter'] : 'mysql',
@@ -260,6 +268,9 @@ class plugin_database extends plugin_base{
         $result = array();
         try {
             $result = $this->_db->fetchAssoc($sql, empty($params) ? array() : $params);
+            if( $this->_debug_mode ){
+                $this->log_last_query('(#of sql_read : '.count($result).')');
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -283,6 +294,9 @@ class plugin_database extends plugin_base{
         try {
             $stmt = $this->_db->query($sql, empty($params) ? array() : $params);
             $result = $stmt->rowCount();
+            if( $this->_debug_mode ){
+                $this->log_last_query('(#of sql_write : '.$result.')');
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -310,6 +324,9 @@ class plugin_database extends plugin_base{
         $result = 0;
         try {
             $result = $this->_db->insert($table, $cols);
+            if( $this->_debug_mode ){
+                $this->log_last_query('(#of inserted : '.$result.')');
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -343,6 +360,9 @@ class plugin_database extends plugin_base{
         $result = 0;
         try {
             $result = $this->_db->update($table, $cols, $cond, $bind);
+            if( $this->_debug_mode ){
+                $this->log_last_query('(#of updated : '.$result.')');
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -371,6 +391,9 @@ class plugin_database extends plugin_base{
         $result = 0;
         try {
             $result = $this->_db->delete($table, $cond, $bind);
+            if( $this->_debug_mode ){
+                $this->log_last_query('(#of deleted : '.$result.')');
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -402,6 +425,9 @@ class plugin_database extends plugin_base{
                 $select->where($cond);
             }
             $result = $this->_db->fetchAssoc($select, $bind);
+            if( $this->_debug_mode ){
+                $this->log_last_query('(#of find_by : '.$result.')');
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -422,6 +448,9 @@ class plugin_database extends plugin_base{
         try {
             // turn off autocommit and start a transaction
             $result = $this->_db->beginTransaction();
+            if( $this->_debug_mode ){
+                $this->log_last_query();
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -448,6 +477,9 @@ class plugin_database extends plugin_base{
             }else{
                 $result = $this->_db->rollback();
             }
+            if( $this->_debug_mode ){
+                $this->log_last_query();
+            }
         } catch (PDOException $e) {
             $this->log_last_query();
             $result = false;
@@ -457,14 +489,44 @@ class plugin_database extends plugin_base{
     }
 
     /**
+     *
+     * Returns an array of columns in a table.
+     *
+     * @param string $spec Return the columns in this table. This may be just
+     * a `table` name, or a `schema.table` name.
+     *
+     * @return array An associative array where the key is the column name
+     * and the value is a Column object.
+     *
+     */
+    public function fetch_table_cols($table){
+        if( empty($this->_db) ){
+            return false;
+        }
+        $result = false;
+        try {
+            return $this->_db->fetchTableCols($table);
+        } catch (PDOException $e) {
+            $this->log_last_query();
+            $result = false;
+            log_message('error', 'Failed to fetchTableCols : '.$e->getMessage().' [ '.$e->getCode().' ]');
+        }
+        return $result;
+    }
+
+    /**
      * log_last_query : log last query SQL statment
      * @return None
      */
-    public function log_last_query(){
-        $query = &$this->_db->getProfiler()->getLastQuery();
-        if( is_array($query) && isset($query['text']) ){
-            // log_message('info', '[SQL] => '.preg_replace("/\r?\n/",' ',$query['text']));
-            log_message('info', '[SQL] => '.$query['text']);
+    public function log_last_query($msg=''){
+        $query = $this->_db->getProfiler()->getLastQuery();
+        if( is_array($query) ){
+            if( isset($query['text']) ){
+                log_message('info', '[SQL] => '.preg_replace("/\r?\n/",' ',$query['text'].' '.$msg));
+            }
+            if( isset($query['data']) ){
+                log_message('info', '      => '.preg_replace("/\r?\n/",' ',json_encode($query['data'], JSON_UNESCAPED_UNICODE)));
+            }
         }
     }
 }
@@ -541,6 +603,16 @@ class plugin_session extends plugin_base{
             $this->init();
         }
         return $this->_sess_sgmt->$key;
+    }
+
+    /**
+     * destroy : destroy current session
+     * @return none
+     */
+    public function destroy(){
+        if( !empty($this->_sess_mgr) ){
+            $this->_sess_mgr->destroy();
+        }
     }
 }
 
