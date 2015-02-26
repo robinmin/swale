@@ -205,3 +205,25 @@ function base_url(){
     $base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
     return $base_url;
 }
+
+/**
+ * ip_address : ip address
+ * @return string    ip address
+ */
+function ip_address(){
+    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])){
+        return  $_SERVER["HTTP_X_FORWARDED_FOR"];
+    }elseif(isset($_SERVER["HTTP_CLIENT_IP"])){
+        return  $_SERVER["HTTP_CLIENT_IP"];
+    }elseif(isset($_SERVER["REMOTE_ADDR"])){
+        return  $_SERVER["REMOTE_ADDR"];
+    }elseif(getenv("HTTP_X_FORWARDED_FOR")){
+        return  getenv("HTTP_X_FORWARDED_FOR");
+    }elseif(getenv("HTTP_CLIENT_IP")){
+        return getenv("HTTP_CLIENT_IP");
+    }elseif(getenv("REMOTE_ADDR")){
+        return  getenv("REMOTE_ADDR");
+    }else{
+        return "Unknown";
+    }
+}
