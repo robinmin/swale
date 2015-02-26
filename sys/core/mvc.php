@@ -38,14 +38,16 @@ class base_ctrl{
      * @param  string  $template template name
      * @param  array  $data      template data
      * @param  boolean $return   display or return the rendered result
+     * @param  boolean $cache    cache output or not
      * @return mixed         true/false or rendered result
      */
-    public function render($template = null, $data = null, $return = FALSE){
+    public function render($template = null, $data = null, $return = false, $cache = false){
         $app = super_app::get_app();
         return render(
             $app->router->get_view_path().'/'.(empty($template) ? $app->router->fetch_action().'.tpl' : $template),
             empty($data) ? $this->_data : $data,
-            $return
+            $return,
+            $cache
         );
     }
 }

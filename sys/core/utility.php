@@ -32,13 +32,14 @@ function microtime_float(){
 
 /**
  * render : render template
- * @param  string  $template template name
- * @param  array  $data      template data
- * @param  boolean $return   display or return the rendered result
+ * @param  string  $template        template name
+ * @param  array  $data             template data
+ * @param  boolean $return          display or return the rendered result
  * @param  boolean $content_type    response content type
+ * @param  boolean $cache           cache output or not
  * @return mixed         true/false or rendered result
  */
-function render($template, $data, $return = FALSE, $content_type=''){
+function render($template, $data, $return = false, $content_type = '', $cache = false){
     // // setup http response header
     // header('Content-Type: '.(empty($content_type) ? 'text/html' : $content_type).'; charset=UTF-8');
 
@@ -50,7 +51,7 @@ function render($template, $data, $return = FALSE, $content_type=''){
     // set default options
     //$smarty->force_compile= true;
     $smarty->debugging      = false;
-    $smarty->caching        = true;
+    $smarty->caching        = $cache;
     $smarty->cache_lifetime = 120;
     $smarty->left_delimiter = '{';
     $smarty->right_delimiter= '}';
