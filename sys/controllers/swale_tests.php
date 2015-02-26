@@ -106,8 +106,37 @@ class swale_tests extends utest{
 
         $this->_assert_true(is_array($auth->get_user_info()), 'Check user info is not null');
 
+        $new_info = [
+            'C_USER_NAME'   => $this->_test_user_info['C_USER_NAME'],
+            'C_EMAIL'       => 'test_123@123.net',
+            'C_EMAIL_NO_KEY'=> 'xxxxxxxxxxx__+#'
+        ];
+        $this->_assert_true($auth->update_user($new_info), "Check update_user");
+        $user_info = $auth->get_user_info();
+        $this->_assert_true(
+            is_array($user_info) && isset($user_info['C_EMAIL']) && $user_info['C_EMAIL']===$new_info['C_EMAIL'],
+            "User info(basic fields) --- 1"
+        );
+        $this->_assert_true(
+            is_array($user_info) && isset($user_info['C_EMAIL_NO_KEY']) && $user_info['C_EMAIL_NO_KEY']===$new_info['C_EMAIL_NO_KEY'],
+            "User info(extension fields) --- 1"
+        );
+
         $this->_assert_true($auth->logout(), 'Normal logout');
         $this->_assert_true($auth->get_user_info()===false, 'Check user info is false when logout');
+
+
+        $this->_assert_true($auth->login($this->_test_user_info['C_USER_NAME'], $this->_test_user_info['C_PASSWORD']), 'Valid username & password again');
+        $user_info = $auth->get_user_info();
+        $this->_assert_true(
+            is_array($user_info) && isset($user_info['C_EMAIL']) && $user_info['C_EMAIL']===$new_info['C_EMAIL'],
+            "User info(basic fields) --- 2"
+        );
+        $this->_assert_true(
+            is_array($user_info) && isset($user_info['C_EMAIL_NO_KEY']) && $user_info['C_EMAIL_NO_KEY']===$new_info['C_EMAIL_NO_KEY'],
+            "User info(extension fields) --- 2"
+        );
+
     }
 
     public function test_auth_user_role(){
@@ -122,4 +151,52 @@ class swale_tests extends utest{
         $this->_assert_true($auth->logout(), 'Normal logout');
     }
 
+    public function test_auth_user_can(){
+        $auth = $this->get_model('auth_model');
+        $auth->set_acl([
+            'utest/every_one'
+        ],[
+            'utest' => [
+                'SysAdmin_only' => 'SysAdmin',
+                'every_one2'    => '*',
+                'admin_both'    => ['SysAdmin','BiZAdmin']
+            ]
+        ]);
+
+        $this->_assert_true($auth->login($this->_test_user_info['C_USER_NAME'], $this->_test_user_info['C_PASSWORD']), 'Valid username & password');
+
+        $this->_assert_true(
+            $auth->is_a('Unknown')
+             && $auth->can('utest', 'every_one')
+             && $auth->can('utest', 'every_one2')
+             && !$auth->can('utest', 'SysAdmin_only')
+             && !$auth->can('utest', 'admin_both')
+             && !$auth->can('utest', 'no_config_key')
+            , 'Check can -- Unknown'
+        );
+
+        $this->_assert_true($auth->grant($auth->get_user_name(), 'SysAdmin'),   'Check grant SysAdmin');
+        $this->_assert_true(
+            $auth->is_a('SysAdmin')
+             && $auth->can('utest', 'every_one')
+             && $auth->can('utest', 'every_one2')
+             && $auth->can('utest', 'SysAdmin_only')
+             && $auth->can('utest', 'admin_both')
+             && !$auth->can('utest', 'no_config_key')
+            , 'Check can -- SysAdmin'
+        );
+
+        $this->_assert_true($auth->grant($auth->get_user_name(), 'BiZAdmin'),   'Check grant BiZAdmin');
+        $this->_assert_true(
+            $auth->is_a('BiZAdmin')
+             && $auth->can('utest', 'every_one')
+             && $auth->can('utest', 'every_one2')
+             && !$auth->can('utest', 'SysAdmin_only')
+             && $auth->can('utest', 'admin_both')
+             && !$auth->can('utest', 'no_config_key')
+            , 'Check can -- BiZAdmin'
+        );
+
+        $this->_assert_true($auth->logout(), 'Normal logout');
+    }
 }
