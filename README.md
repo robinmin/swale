@@ -50,3 +50,4 @@ php ./server.php
 
 #### Feature ####
   - Add unit test support -- 2015-02-10
+  - Add authentication with simple acl -- 2015-02-26
