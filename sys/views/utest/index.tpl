@@ -32,7 +32,7 @@
 </head><body page_id="swale_unit_test">
     <br />
     <div class="uk-container uk-container-center">
-        <h2 class="uk-container-center"><strong><span class="uk-icon-puzzle-piece" style="color: green;"></span>Swale Unit Test Results ({$module}):</strong></h2>
+        <h2 class="uk-container-center"><strong><span class="uk-icon-puzzle-piece" style="color: green;"></span>Swale Unit Test Results ({$module}):</strong> -- {$time_stamp}</h2>
         <table class="uk-table uk-table-condensed">
             <thead>
                 <tr>
