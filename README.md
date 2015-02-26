@@ -52,7 +52,7 @@ php ./server.php
 
 
 Date | Content
----------+---------
+-------- | --------
 2015-02-10 | Add unit test support
 2015-02-26 | Add authentication with simple acl
 
