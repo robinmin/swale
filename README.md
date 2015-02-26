@@ -48,6 +48,11 @@ Now, you can start the default web server by:
 php ./server.php
 ```
 
-#### Feature ####
-  - Add unit test support -- 2015-02-10
-  - Add authentication with simple acl -- 2015-02-26
+#### Change Log ####
+
+
+Date | Content
+---------+---------
+2015-02-10 | Add unit test support
+2015-02-26 | Add authentication with simple acl
+
