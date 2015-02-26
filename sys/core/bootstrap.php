@@ -620,7 +620,11 @@ class AppServer {
         }
 
         // output access log
-        log_message('info', (isset($request->server['REQUEST_METHOD']) ? $request->server['REQUEST_METHOD'] : 'GET').' '.(isset($request->server['REQUEST_URI']) ? $request->server['REQUEST_URI'] : '').'......');
+        log_message('info', sprintf('%s %s........%s',
+            $request->server['REQUEST_METHOD'],
+            $request->server['REQUEST_URI'],
+            ip_address()
+        ));
 
         $blResult = true;
         // load plugins
@@ -775,10 +779,8 @@ class AppServer {
         while( count($cfg)>0){
             $name = array_shift($cfg);
             $cls_name = 'plugin_'.$name;
-            // if (!class_exists($cls_name, false)) {
-            //     require_once (APP_PATH.'/libs/'.$cls_name.'.php');
-            // }
-            self::load_class($cls_name, 'libs', true);
+
+            self::load_class($cls_name, 'models', true);
             $plugins[$name] = new $cls_name();
             if( !$plugins[$name]->init() ){
                 log_message('error', 'Failed to init plugin : '.$name);
