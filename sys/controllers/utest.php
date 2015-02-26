@@ -52,7 +52,8 @@ class utest extends base_ctrl{
         $this->_data = array(
             'module'    => $this->modelname_short,
             'utest'     => $this->_results,
-            'base_url'  => base_url().$app->router->fetch_class().'/'.$app->router->fetch_action().'/'.$cli.'/'
+            'base_url'  => base_url().$app->router->fetch_class().'/'.$app->router->fetch_action().'/'.$cli.'/',
+            'time_stamp'=> date('Y-m-d H:i:s')
         );
         // show result
         if( '1'==$cli ){
@@ -164,6 +165,9 @@ class utest extends base_ctrl{
     public function _post() { }
 
     private function _log_result($func, $result=true, $message=''){
+        if( !empty($message) ){
+            $this->message = $message;
+        }
         $this->_results[$this->_method_name]['results'][] = [
             'function'  => $func,
             'result'    => $result,
@@ -171,111 +175,118 @@ class utest extends base_ctrl{
         ];
     }
 
-    public function _fail($message = null) {
+    public function _fail($message = '') {
         $this->_log_result(__FUNCTION__, false, $message);
         $this->asserts = FALSE;
-        if ($message != null) {
-            $this->message = $message;
-        }
         return FALSE;
     }
 
-    public function _assert_true($assertion) {
-        $this->_log_result(__FUNCTION__, $assertion);
+    public function _assert_true($assertion, $message='') {
         if($assertion) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_false($assertion) {
-        $this->_log_result(__FUNCTION__, $assertion);
+    public function _assert_false($assertion, $message='') {
         if($assertion) {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         } else {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         }
     }
 
-    public function _assert_true_strict($assertion) {
-        $this->_log_result(__FUNCTION__, $assertion === TRUE);
+    public function _assert_true_strict($assertion, $message='') {
         if($assertion === TRUE) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_false_strict($assertion) {
-        $this->_log_result(__FUNCTION__, $assertion===FALSE ? FALSE : TRUE);
+    public function _assert_false_strict($assertion, $message='') {
         if($assertion === FALSE) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_equals($base, $check) {
-        $this->_log_result(__FUNCTION__, $base == $check);
+    public function _assert_equals($base, $check, $message='') {
         if($base == $check) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_not_equals($base, $check) {
-        $this->_log_result(__FUNCTION__, $base != $check);
+    public function _assert_not_equals($base, $check, $message='') {
         if($base != $check) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_equals_strict($base, $check) {
-        $this->_log_result(__FUNCTION__, $base === $check);
+    public function _assert_equals_strict($base, $check, $message='') {
         if($base === $check) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_not_equals_strict($base, $check) {
-        $this->_log_result(__FUNCTION__, $base !== $check);
+    public function _assert_not_equals_strict($base, $check, $message='') {
         if($base !== $check) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_empty($assertion) {
-        $this->_log_result(__FUNCTION__, empty($assertion));
+    public function _assert_empty($assertion, $message='') {
         if(empty($assertion)) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
 
-    public function _assert_not_empty($assertion) {
-        $this->_log_result(__FUNCTION__, !empty($assertion));
+    public function _assert_not_empty($assertion, $message='') {
         if(!empty($assertion)) {
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return TRUE;
         } else {
             $this->asserts = FALSE;
+            $this->_log_result(__FUNCTION__, $this->asserts, $message);
             return FALSE;
         }
     }
