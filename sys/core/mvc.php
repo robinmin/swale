@@ -30,8 +30,7 @@ class base_ctrl{
      * @return object         instance of model
      */
     public function get_model($model='', $params=null){
-        $app = super_app::get_app();
-        return $app->get_model($model, $params);
+        return super_app::get_app()->get_model($model, $params);
     }
 
     /**
@@ -76,6 +75,16 @@ class base_model{
      * __destruct : dector
      */
     public function __destruct(){}
+
+    /**
+     * get_model : get instance of specified model
+     * @param  string $model  model name
+     * @param  mixed  $params parameter for new model ctor
+     * @return object         instance of model
+     */
+    public function get_model($model='', $params=null){
+        return super_app::get_app()->get_model($model, $params);
+    }
 
     /**
      * sql_read : read data from database by SQL statement
@@ -131,6 +140,12 @@ class base_model{
         return $this->_database->find_by($table, $cond, $selected, $bind);
     }
 
+    public function fetch_table_cols($table){
+        if( empty($this->_database) ){
+            return false;
+        }
+        return $this->_database->fetch_table_cols($table);
+    }
 ///////////////////////////////////////////////////////////////////////////////
 // Code copied from existing projects
 ///////////////////////////////////////////////////////////////////////////////
