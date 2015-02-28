@@ -62,6 +62,15 @@ class std_container{
     public function get_raw_data(){
         return $this->_container;
     }
+
+    /**
+     * has : check current container has the named object or not
+     * @param  string  $name object key name
+     * @return boolean       has or not
+     */
+    public function has($name){
+        return property_exists($this->_container, $name);
+    }
 }
 
 /**
@@ -125,6 +134,15 @@ class array_container{
      */
     public function get_raw_data(){
         return $this->_container;
+    }
+
+    /**
+     * has : check current container has the named object or not
+     * @param  string  $name object key name
+     * @return boolean       has or not
+     */
+    public function has($name){
+        return isset($this->_container[$name]);
     }
 }
 

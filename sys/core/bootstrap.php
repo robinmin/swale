@@ -31,7 +31,7 @@ class AppServer {
     private $_default_sys_plugin = array('database');
 
     // Default plugin for each http request
-    private $_default_http_plugin = array('buffer', 'router', 'session');
+    private $_default_http_plugin = array('buffer', 'router', 'session', 'auth');
 
     // Global server instance
     private $_server;
@@ -650,6 +650,13 @@ class AppServer {
                 $this->config->get('http_web_root', '.')
             );
 
+            // check security
+            if( $app->has('auth') ){
+                if( $this->config->get('acl_on', true) && false===$app->auth->can() ){
+                    throw new Exception('No access : '.$request->server['REQUEST_URI'], 403);
+                }
+            }
+
             $time_start = microtime(true);
 
             // route the relevant class
@@ -727,9 +734,7 @@ class AppServer {
         while( count($cfg)>0){
             $name = array_shift($cfg);
             $cls_name = 'plugin_'.$name;
-            if (!class_exists($cls_name, false)) {
-            // TODO : load class definition
-            }
+            self::load_class($cls_name, 'models', true);
             $plugins[$name] = new $cls_name($request, $response);
             if( !$plugins[$name]->init() ){
                 log_message('error', 'Failed to init plugin : '.$name);

@@ -143,6 +143,7 @@ class swale_tests extends utest{
         $auth = $this->get_model('auth_model');
 
         $this->_assert_true($auth->login($this->_test_user_info['C_USER_NAME'], $this->_test_user_info['C_PASSWORD']), 'Valid username & password');
+        $this->_assert_true($auth->grant($auth->get_user_name(), 'Unknown'),   'Check grant Unknown');
         $this->_assert_true($auth->is_a('Unknown'),   'Check role : Unknown');
 
         $this->_assert_true($auth->grant($auth->get_user_name(), 'SysAdmin'),   'Check grant SysAdmin');
@@ -164,36 +165,30 @@ class swale_tests extends utest{
         ]);
 
         $this->_assert_true($auth->login($this->_test_user_info['C_USER_NAME'], $this->_test_user_info['C_PASSWORD']), 'Valid username & password');
-
         $this->_assert_true(
-            $auth->is_a('Unknown')
-             && $auth->can('utest', 'every_one')
-             && $auth->can('utest', 'every_one2')
-             && !$auth->can('utest', 'SysAdmin_only')
-             && !$auth->can('utest', 'admin_both')
-             && !$auth->can('utest', 'no_config_key')
+            $auth->can('utest', 'every_one',            'Unknown')
+             && $auth->can('utest', 'every_one2',       'Unknown')
+             && !$auth->can('utest', 'SysAdmin_only',   'Unknown')
+             && !$auth->can('utest', 'admin_both',      'Unknown')
+             && !$auth->can('utest', 'no_config_key',   'Unknown')
             , 'Check can -- Unknown'
         );
 
-        $this->_assert_true($auth->grant($auth->get_user_name(), 'SysAdmin'),   'Check grant SysAdmin');
         $this->_assert_true(
-            $auth->is_a('SysAdmin')
-             && $auth->can('utest', 'every_one')
-             && $auth->can('utest', 'every_one2')
-             && $auth->can('utest', 'SysAdmin_only')
-             && $auth->can('utest', 'admin_both')
-             && !$auth->can('utest', 'no_config_key')
+            $auth->can('utest', 'every_one',            'SysAdmin')
+             && $auth->can('utest', 'every_one2',       'SysAdmin')
+             && $auth->can('utest', 'SysAdmin_only',    'SysAdmin')
+             && $auth->can('utest', 'admin_both',       'SysAdmin')
+             && !$auth->can('utest', 'no_config_key',   'SysAdmin')
             , 'Check can -- SysAdmin'
         );
 
-        $this->_assert_true($auth->grant($auth->get_user_name(), 'BiZAdmin'),   'Check grant BiZAdmin');
         $this->_assert_true(
-            $auth->is_a('BiZAdmin')
-             && $auth->can('utest', 'every_one')
-             && $auth->can('utest', 'every_one2')
-             && !$auth->can('utest', 'SysAdmin_only')
-             && $auth->can('utest', 'admin_both')
-             && !$auth->can('utest', 'no_config_key')
+            $auth->can('utest', 'every_one',            'BiZAdmin')
+             && $auth->can('utest', 'every_one2',       'BiZAdmin')
+             && !$auth->can('utest', 'SysAdmin_only',   'BiZAdmin')
+             && $auth->can('utest', 'admin_both',       'BiZAdmin')
+             && !$auth->can('utest', 'no_config_key',   'BiZAdmin')
             , 'Check can -- BiZAdmin'
         );
 

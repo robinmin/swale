@@ -19,7 +19,7 @@
             "dsn"       : "host=localhost;dbname=test",
             "username"  : "user",
             "password"  : "password",
-            "debug_mode": true
+            "debug_mode": false
     },
     "cache" : {
         "ip"   : "127.0.0.1",
@@ -27,5 +27,6 @@
     },
     "http_plugin"       : [],
     "sys_plugin"        : [],
+    "acl_on"            : false,
     "http_url_prefix"   : ""
 }
