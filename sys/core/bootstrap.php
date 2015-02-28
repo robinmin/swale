@@ -167,21 +167,15 @@ class AppServer {
             return true;
         }
 
-        $strCfg = APP_PATH.'/config/config.'.SYS_ENV.'.json';
-        if( !file_exists($strCfg) ){
-            $strCfg = APP_PATH.'/config/config.json';
-        }
-        if( !file_exists($strCfg) ){
+        $objCfg = $this->load_config('config');
+        if( false===$objCfg ){
+            log_message('error', 'Failed to load config file: config.php');
             return false;
         }
-        $strContent = file_get_contents($strCfg);
-        $objCfg = json_decode($strContent,true);
-        if( !empty($objCfg) ){
-            $this->config = new array_container();
-            $objCfg = array_merge($objCfg, $config);
-            foreach ($objCfg as $key => $value) {
-                $this->config->$key = $value;
-            }
+        $this->config = new array_container();
+        $objCfg = array_merge($objCfg, $config);
+        foreach ($objCfg as $key => $value) {
+            $this->config->$key = $value;
         }
         return true;
     }
@@ -897,6 +891,11 @@ class AppServer {
         }
     }
 
+    /**
+     * request : send http request to local server
+     * @param  string $cmdline requested url
+     * @return string          responsed http content
+     */
     public function request($cmdline=''){
         // find commond line
         if( is_array($cmdline) ){
@@ -934,5 +933,14 @@ class AppServer {
         }
         // output
         echo $content;
+    }
+
+    /**
+     * get_log_file : get log file name
+     * @return sting  log file name
+     */
+    public function get_log_file(){
+        $setting = $this->config->get('setting', array());
+        return isset($setting['log_file']) ? $setting['log_file'] : '';
     }
 }

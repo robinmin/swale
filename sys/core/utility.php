@@ -10,19 +10,35 @@ function log_message($level, $message=''){
     $level = strtoupper($level);
     $begin = '';
     $end ='';
-    switch( $level ){
-        case 'ERROR':
-            $begin = "\x1b[1;31;40m";
-            $end   = "\x1b[0m";
-            break;
-        case 'INFO':
-            $begin = "\x1b[1;32;40m";
-            $end   = "\x1b[0m";
-            break;
-        default:
-            break;
+    $log = AppServer::get_instance()->get_log_file();
+    if( empty($log) ){
+        switch( $level ){
+            case 'ERROR':
+                $begin = "\x1b[1;31;40m";
+                $end   = "\x1b[0m";
+                break;
+            case 'INFO':
+                $begin = "\x1b[1;32;40m";
+                $end   = "\x1b[0m";
+                break;
+            default:
+                break;
+        }
     }
-    fwrite(STDERR, $begin.date('m-d H:i:s').' @'.getmypid().' : ['.$level.'] '.$message.$end.PHP_EOL);
+    $output = $begin.date('m-d H:i:s').' @'.getmypid().' : ['.$level.'] '.$message.$end.PHP_EOL;
+
+    if( empty($log) ){
+        fwrite(STDERR, $output);
+    }else{
+        $lock = new swoole_lock(SWOOLE_MUTEX);
+        $lock->lock();
+
+        $fp = fopen($log, 'a+');
+        fwrite($fp, $output);
+        fclose($fp);
+
+        $lock->unlock();
+    }
 }
 
 function microtime_float(){
