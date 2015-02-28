@@ -27,6 +27,6 @@
     },
     "http_plugin"       : [],
     "sys_plugin"        : [],
-    "acl_on"            : false,
+    "acl_on"            : true,
     "http_url_prefix"   : ""
 }
