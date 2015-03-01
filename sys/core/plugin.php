@@ -559,7 +559,8 @@ class plugin_session extends plugin_base{
                 ),
                 $_COOKIE
             );
-            $this->_sess_sgmt = $this->_sess_mgr->newSegment(__FUNCTION__);   // set new segment
+            $domain = AppServer::get_instance()->config->get('session_domain', __METHOD__);
+            $this->_sess_sgmt = $this->_sess_mgr->newSegment($domain);   // set new segment
 
             // load session data by session cookie id into $_SESSION
         }

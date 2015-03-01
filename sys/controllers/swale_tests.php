@@ -194,4 +194,21 @@ class swale_tests extends utest{
 
         $this->_assert_true($auth->logout(), 'Normal logout');
     }
+
+    public function test_task(){
+        $svr = AppServer::get_instance();
+        $this->_assert_true(is_int($svr->task('MyTest', 'run_test_job', array('time'=>123))), 'Run task');
+    }
+
+    public function test_session(){
+        $app = super_app::get_app();
+
+        $new_val = rand(1, 9999);
+        $app->session->set('once', $new_val);
+
+        $domain = AppServer::get_instance()->config->get('session_domain', __METHOD__);
+        $test = $app->session->get('once');
+
+        $this->_assert_true($new_val===$test && $new_val===$_SESSION[$domain]['once'], 'Run task');
+    }
 }

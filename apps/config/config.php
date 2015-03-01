@@ -31,5 +31,6 @@ return [
     'http_plugin'       => [],
     'sys_plugin'        => [],
     'acl_on'            => true,
-    'http_url_prefix'   => ''
+    'http_url_prefix'   => '',
+    'session_domain'    => 'swale.test'
 ];
