@@ -1,5 +1,5 @@
 ## swale
-This is a tiny MVC framework for application server based on [swoole](http://www.swoole.com/) extension.
+Swale is a tiny MVC framework for application server based on [swoole](http://www.swoole.com/) extension.
 
 
 #### Installation ####
