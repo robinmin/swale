@@ -1,44 +1,5 @@
 [
     {
-        "name": "maliemin/ssdb-session",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/maliemin-Mstar/ssdb-session.git",
-            "reference": "0ad29f651e9fa23cdeb144a960ffbcc6ab8ed90e"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/maliemin-Mstar/ssdb-session/zipball/0ad29f651e9fa23cdeb144a960ffbcc6ab8ed90e",
-            "reference": "0ad29f651e9fa23cdeb144a960ffbcc6ab8ed90e",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.5.1",
-            "ssdb/phpssdb": "dev-master"
-        },
-        "time": "2014-12-09 03:37:13",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "SSDBSession\\": "src/"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "maliemin-Mstar",
-                "email": "maliemin.jj@gmail.com"
-            }
-        ],
-        "description": "A PHP SSDB Session Handler"
-    },
-    {
         "name": "guzzlehttp/streams",
         "version": "1.5.1",
         "version_normalized": "1.5.1.0",
@@ -350,6 +311,63 @@
         ]
     },
     {
+        "name": "smarty/smarty",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/smarty-php/smarty.git",
+            "reference": "464b37c0538efb237b92f24fccbf1ba16d779e33"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/464b37c0538efb237b92f24fccbf1ba16d779e33",
+            "reference": "464b37c0538efb237b92f24fccbf1ba16d779e33",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.2"
+        },
+        "time": "2015-02-15 15:58:42",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.1.x-dev"
+            }
+        },
+        "installation-source": "source",
+        "autoload": {
+            "classmap": [
+                "libs/Smarty.class.php",
+                "libs/SmartyBC.class.php",
+                "libs/sysplugins/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "Monte Ohrt",
+                "email": "monte@ohrt.com"
+            },
+            {
+                "name": "Uwe Tews",
+                "email": "uwe.tews@googlemail.com"
+            },
+            {
+                "name": "Rodney Rehm",
+                "email": "rodney.rehm@medialize.de"
+            }
+        ],
+        "description": "Smarty - the compiling PHP template engine",
+        "homepage": "http://www.smarty.net",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
         "name": "ssdb/phpssdb",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -390,62 +408,5 @@
             }
         ],
         "description": "SSDB PHP Client"
-    },
-    {
-        "name": "smarty/smarty",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/smarty-php/smarty.git",
-            "reference": "0e87a99507c9acd6ebc10110014060c8f283474d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/smarty-php/smarty/zipball/0e87a99507c9acd6ebc10110014060c8f283474d",
-            "reference": "0e87a99507c9acd6ebc10110014060c8f283474d",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "time": "2015-02-11 06:15:40",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "3.1.x-dev"
-            }
-        },
-        "installation-source": "source",
-        "autoload": {
-            "classmap": [
-                "libs/Smarty.class.php",
-                "libs/SmartyBC.class.php",
-                "libs/sysplugins/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-3.0"
-        ],
-        "authors": [
-            {
-                "name": "Monte Ohrt",
-                "email": "monte@ohrt.com"
-            },
-            {
-                "name": "Uwe Tews",
-                "email": "uwe.tews@googlemail.com"
-            },
-            {
-                "name": "Rodney Rehm",
-                "email": "rodney.rehm@medialize.de"
-            }
-        ],
-        "description": "Smarty - the compiling PHP template engine",
-        "homepage": "http://www.smarty.net",
-        "keywords": [
-            "templating"
-        ]
     }
 ]

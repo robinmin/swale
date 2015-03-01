@@ -1,6 +1,8 @@
 {
     "name": "robinmin/swale",
     "description": "my tiny MVC framework for application",
+    "minimum-stability" : "dev",
+    "prefer-stable": true,
     "version": "0.0.2",
     "type": "project",
     "authors": [{
@@ -12,8 +14,9 @@
         "aura/sql"             : "dev-master",
         "aura/session"         : "dev-master",
         "guzzlehttp/guzzle"    : "4.1.*",
-        "smarty/smarty"        : "3.1.*@dev",
-        "ssdb/phpssdb"         : "dev-master",
-        "maliemin/ssdb-session": "dev-master"
+        "smarty/smarty"        : "3.1.*@dev"
+    },
+    "require-dev": {
+        "ssdb/phpssdb": "dev-master"
     }
 }

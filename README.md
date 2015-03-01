@@ -24,7 +24,7 @@ Then run the following command to prepare project folder structure:
 
 ```BASH
 composer install --dev
-cp -p vendor/robinmin/swale/server.php server.php
+cp -p vendor/robinmin/swale/*.php .
 cp -rp vendor/robinmin/swale/apps ./apps
 mkdir test
 ```
