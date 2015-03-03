@@ -896,7 +896,7 @@ class AppServer {
      * @param  string $cmdline requested url
      * @return string          responsed http content
      */
-    public function request($cmdline=''){
+    public function request($cmdline = '', $base_url = null){
         // find commond line
         if( is_array($cmdline) ){
             if( count($cmdline)>1 ){
@@ -910,11 +910,14 @@ class AppServer {
         $time_cost = 0;
         $content = '';
         try {
-            $serverPort = $this->config->get('server_port', 2048);
             $time_start = microtime(true);
 
+            if( empty($base_url) ){
+                $serverPort = $this->config->get('server_port', 2048);
+                $base_url = 'http://127.0.0.1:'.$serverPort.'/';
+            }
             // create client instance
-            $client = new \GuzzleHttp\Client(['base_url' => 'http://127.0.0.1:'.$serverPort.'/']);
+            $client = new \GuzzleHttp\Client(['base_url' => $base_url]);
 
             $response = $client->get($cmdline);
             $content = (string)$response->getBody();
